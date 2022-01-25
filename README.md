@@ -2,6 +2,9 @@
 A Recommandation System Suggesting Movies for it Users.
 
 
+# Setup
+This repository uses the Python version 3.7 .
+
 # Install
 1. Install requirements using 
 ```shell
