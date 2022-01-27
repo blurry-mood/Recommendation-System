@@ -11,10 +11,10 @@ import pandas as pd
 import numpy as np
 import json
 # Custom Libraries
-#from recommenders.vasp import vasp_model
+from src.vasp.vasp import vasp_model
 
 # Data Loading
-title_list = pd.read_json('../artifacts/items_pu5.json').product_name.values.tolist()
+title_list = pd.read_json('artifacts/items_pu5.json').product_name.values.tolist()
 
 
 # App declaration
