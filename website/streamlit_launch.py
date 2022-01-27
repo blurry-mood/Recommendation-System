@@ -12,6 +12,7 @@ import numpy as np
 import json
 # Custom Libraries
 from src.vasp.vasp import vasp_model
+from src.Content_Based.content_based import content_based_model
 
 # Data Loading
 title_list = pd.read_json('artifacts/items_pu5.json').product_name.values.tolist()
@@ -53,7 +54,20 @@ def main():
         if sys == "Collaboratif filtering":
             st.write('not implimented')
         if sys == "Content Based":
-            st.write('Not implimented')
+            #st.write('Not implimented')
+            if st.button("Recommend"):
+                try:
+                    top_recommendations = content_based_model(fav_movies,number)
+                    st.write("We think you'll like:")
+                    st.download_button(
+                        label="Download the results",
+                        data=json.dumps(top_recommendations),
+                        file_name='large_df.json',
+                        mime='text/json',
+                    )
+                except:
+                    st.error("Oops! Looks like something went wrong Try Again ...")
+
         if sys == "VASP":
             # st.write("The current model")
             if st.button("Recommend"):
