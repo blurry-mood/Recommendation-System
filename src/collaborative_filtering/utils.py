@@ -6,12 +6,6 @@ from surprise import KNNBasic
 
 from fuzzywuzzy import fuzz
 
-_HERE = split(__file__)[0]
-data_dir = join(_HERE, '..', '..', 'dataset', 'movielens')
-
-_ratings = pd.read_csv(join(data_dir, 'ratings.csv'))
-_tags = pd.read_csv(join(data_dir, 'tags.csv'))
-_movies = pd.read_csv(join(data_dir, 'movies.csv'))
 
 
 def get_movie_index(movie_name):
@@ -62,8 +56,8 @@ def fuzzy_matching(movie_names, movie, verbose=False):
         print('Found possible matches in our database: {0}\n'.format([x[0] for x in match_tuple]))
     return match_tuple[0][0]
 
-_movie_names = get_movie_names()
-_movie_ids = get_movie_ids()
+
+
 
 def get_users_predictions(user_id, n, model):
     recommended_items = pd.DataFrame(model.loc[user_id])
@@ -110,13 +104,21 @@ def recommend(fav_movies, topK=10):
     
     
     
-    
-    
-    
-    
-    
-# Surprise Full Dataset
-_full_dataset = Dataset.load_from_df(ratings_df(), Reader(rating_scale=(0, 5))).build_full_trainset()
+# if  True:
+if __name__=='__main__':
+    _HERE = split(__file__)[0]
+    data_dir = join(_HERE, '..', '..', 'dataset', 'movielens')
+
+    _ratings = pd.read_csv(join(data_dir, 'ratings.csv'))
+    _tags = pd.read_csv(join(data_dir, 'tags.csv'))
+    _movies = pd.read_csv(join(data_dir, 'movies.csv'))
+
+
+
+    _movie_names = get_movie_names()
+    _movie_ids = get_movie_ids()
+    # Surprise Full Dataset
+    _full_dataset = Dataset.load_from_df(ratings_df(), Reader(rating_scale=(0, 5))).build_full_trainset()
 
 
 def prediction_item(model, item_id):

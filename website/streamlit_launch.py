@@ -6,7 +6,6 @@ path.insert(0, join(split(__file__)[0], '..'))
 # Streamlit dependencies
 import streamlit as st
 
-
 st.set_page_config(
     page_title="ENSIAS",
     page_icon="chart_with_upwards_trend",
@@ -16,10 +15,18 @@ st.set_page_config(
 import pandas as pd
 import numpy as np
 import json
+
 # Custom Libraries
+
+print('import vasp')
 from src.vasp.vasp import vasp_model
-from src.Content_Based.content_based import content_based_model
+
+print('import content')
+from src.Content_Based.content_based import content_based_model, metadata
+
+print('import collaborative')
 from src.collaborative_filtering.utils import recommend as knn_recommender
+from src.collaborative_filtering.utils import fuzzy_matching
 
 # Data Loading
 title_list = pd.read_json('artifacts/items_pu5.json').product_name.values.tolist()
@@ -29,27 +36,21 @@ title_list = pd.read_json('artifacts/items_pu5.json').product_name.values.tolist
 def main():
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    #page_options = ["Recommender System", "Solution Overview"]
+    # page_options = ["Recommender System", "Solution Overview"]
 
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
     # -------------------------------------------------------------------
-    #page_selection = st.sidebar.selectbox("Choose Option", page_options)
-    if True:#page_selection == "Recommender System":
+    # page_selection = st.sidebar.selectbox("Choose Option", page_options)
+    if True:  # page_selection == "Recommender System":
         # Header contents
         st.write('### Movie Recommender Engine')
         # st.write('### EXPLORE Data Science Academy Unsupervised Predict')
-        #st.image('resources/imgs/Image_header.png', use_column_width=True)
+        # st.image('resources/imgs/Image_header.png', use_column_width=True)
 
         sys = st.radio("Select an algorithm",
                        ("Collaboratif filtering", "Content Based", 'VASP', "Hybrid"))
 
-        # User-based preferences
-        # st.write('Enter Your Favorite Movies')
-        # movie_1 = st.selectbox('Fisrt Option',title_list)
-        # movie_2 = st.selectbox('Second Option',title_list)
-        # movie_3 = st.selectbox('Third Option',title_list)
-        # fav_movies = [movie_1,movie_2,movie_3]
         fav_movies = st.multiselect("Enter Your Favorite Movies",
                                     title_list)
         number = st.slider("How much movies you want to be recommended:", 5, 100)
@@ -59,11 +60,12 @@ def main():
             st.write("Not implimented")
 
         if sys == "Collaboratif filtering":
-            #st.write('Not implimented')
+            # st.write('Not implimented')
             if st.button("Recommend"):
                 try:
                     top_recommendations = knn_recommender(fav_movies, number)
                     st.write("We think you'll like:")
+                    st.write(top_recommendations)
                     st.download_button(
                         label="Download the results",
                         data=json.dumps(top_recommendations),
@@ -72,13 +74,22 @@ def main():
                     )
                 except:
                     st.error("Oops! Looks like something went wrong Try Again ...")
-            
+
         if sys == "Content Based":
-            #st.write('Not implimented')
+
+            # metadata
+            # fav_movies = st.multiselect("Enter Your Favorite Movies",
+            #                             metadata.original_title.values.tolist())
+            # st.write('Not implimented')
+
+
             if st.button("Recommend"):
                 try:
-                    top_recommendations = content_based_model(fav_movies,number)
+                    new_list = [fuzzy_matching(metadata.original_title.values.tolist(), fav_movies[0])]
+                    print('###############',fav_movies[0],new_list)
+                    top_recommendations = content_based_model(new_list, number).values.tolist()
                     st.write("We think you'll like:")
+                    st.write(top_recommendations)
                     st.download_button(
                         label="Download the results",
                         data=json.dumps(top_recommendations),
@@ -111,6 +122,7 @@ def main():
                               We'll need to fix it!")
 
     # -------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     main()
