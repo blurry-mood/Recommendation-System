@@ -1,0 +1,14 @@
+[
+  "The Pagemaster",
+  "The Indian in the Cupboard",
+  "The Wizard of Oz",
+  "Mrs. Doubtfire",
+  "Gordy",
+  "Kim",
+  "Andre",
+  "Flipper",
+  "Dunston Checks In",
+  "A Kid in King Arthur's Court",
+  "Free Willy",
+  "Theodore Rex"
+]

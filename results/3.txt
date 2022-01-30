@@ -1,0 +1,12 @@
+[
+  "Legends of the Fall (1994)",
+  "While You Were Sleeping (1995)",
+  "Apollo 13 (1995)",
+  "Milk Money (1994)",
+  "Timecop (1994)",
+  "Misérables, Les (1995)",
+  "Showgirls (1995)",
+  "Dolores Claiborne (1995)",
+  "Mallrats (1995)",
+  "Star Trek: Generations (1994)"
+]
