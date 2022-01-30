@@ -6,3 +6,4 @@ git+https://github.com/statisticianinstilettos/recmetrics.git
 jupyter
 fuzzywuzzy
 python-Levenshtein
+streamlit
