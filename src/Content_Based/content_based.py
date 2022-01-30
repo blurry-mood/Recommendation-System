@@ -53,7 +53,7 @@ def get_name(x,jb_idx):
     return []
     
     
-  def clean_data(x):
+def clean_data(x):
     if isinstance(x, list):
         return [str.lower(i.replace(" ", "")) for i in x]
     else:
