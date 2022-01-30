@@ -7,3 +7,5 @@ jupyter
 fuzzywuzzy
 python-Levenshtein
 streamlit
+jinja2==2.11
+tensorflow
