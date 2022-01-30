@@ -105,20 +105,20 @@ def recommend(fav_movies, topK=10):
     
     
 # if  True:
-if __name__=='__main__':
-    _HERE = split(__file__)[0]
-    data_dir = join(_HERE, '..', '..', 'dataset', 'movielens')
+# if __name__=='__main__':
+_HERE = split(__file__)[0]
+data_dir = join(_HERE, '..', '..', 'dataset', 'movielens')
 
-    _ratings = pd.read_csv(join(data_dir, 'ratings.csv'))
-    _tags = pd.read_csv(join(data_dir, 'tags.csv'))
-    _movies = pd.read_csv(join(data_dir, 'movies.csv'))
+_ratings = pd.read_csv(join(data_dir, 'ratings.csv'))
+_tags = pd.read_csv(join(data_dir, 'tags.csv'))
+_movies = pd.read_csv(join(data_dir, 'movies.csv'))
 
 
 
-    _movie_names = get_movie_names()
-    _movie_ids = get_movie_ids()
-    # Surprise Full Dataset
-    _full_dataset = Dataset.load_from_df(ratings_df(), Reader(rating_scale=(0, 5))).build_full_trainset()
+_movie_names = get_movie_names()
+_movie_ids = get_movie_ids()
+# Surprise Full Dataset
+_full_dataset = Dataset.load_from_df(ratings_df(), Reader(rating_scale=(0, 5))).build_full_trainset()
 
 
 def prediction_item(model, item_id):
