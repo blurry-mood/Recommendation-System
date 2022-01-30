@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 from surprise.model_selection import train_test_split
@@ -20,22 +20,23 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 
+from utils import *
 
-# In[5]:
+
+# In[2]:
 
 
-_HERE = ''
-dataset_path = join(_HERE, '..', '..', 'dataset', 'movielens', 'ratings.csv')
-dataset_path
+_HERE = '' # split(__file__)[0]
 
 
 # # Read dataset
 
-# In[6]:
+# In[ ]:
 
 
-ratings = pd.read_csv(dataset_path)
+ratings = ratings_df()
 ratings = ratings.query('rating >=3')
+ratings = ratings.sample(n=1000)
 ratings.reset_index(drop=True, inplace=True)
 
 ratings.head()
@@ -43,15 +44,15 @@ ratings.head()
 
 # # k-NN Model training
 
-# In[7]:
+# In[ ]:
 
 
-reader = Reader(line_format='user item rating timestamp', sep=',' , rating_scale=(0.5, 5), skip_lines=162541*150)
-data = Dataset.load_from_file(dataset_path, reader=reader)
+reader = Reader(rating_scale=(0, 5))
+data = Dataset.load_from_df(ratings[['userId', 'movieId', 'rating']], reader=reader)
 trainset, testset = train_test_split(data, test_size=.25)
 
 
-# In[8]:
+# In[ ]:
 
 
 sim_options = {'name': 'cosine',
@@ -60,19 +61,31 @@ sim_options = {'name': 'cosine',
 algo = KNNBasic(k=2, sim_options=sim_options, verbose=True)
 
 
-# In[9]:
+# In[ ]:
 
 
 algo.fit(trainset)
 
 
-# In[10]:
+# In[ ]:
+
+
+testset[0]
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
 
 
 preds = algo.test(testset, verbose=False)
 
 
-# In[11]:
+# In[ ]:
 
 
 preds = pd.DataFrame(preds)
@@ -83,14 +96,14 @@ preds.head()
 
 # # Recommendations
 
-# In[12]:
+# In[ ]:
 
 
 cf_model = preds.pivot_table(index='userId', columns='movieId', values='cf_predictions').fillna(0)
 cf_model.head()
 
 
-# In[13]:
+# In[ ]:
 
 
 test = preds.copy().groupby('userId', as_index=False)['movieId'].agg({'actual': (lambda x: list(set(x)))})
@@ -100,7 +113,7 @@ test.head()
 
 # # k-NN recommendations
 
-# In[14]:
+# In[ ]:
 
 
 def get_users_predictions(user_id, n, model):
@@ -111,7 +124,7 @@ def get_users_predictions(user_id, n, model):
     return recommended_items.index.tolist()
 
 
-# In[15]:
+# In[ ]:
 
 
 # make recommendations for all members in the test data
@@ -126,7 +139,7 @@ test.head()
 
 # # Popularity-based recommendations
 
-# In[16]:
+# In[ ]:
 
 
 #make recommendations for all members in the test data
@@ -143,7 +156,7 @@ test.head()
 
 # # Random recommendations
 
-# In[18]:
+# In[ ]:
 
 
 # make recommendations for all members in the test data
@@ -159,7 +172,7 @@ test['random_predictions'] = ran_recs
 test.head()
 
 
-# In[25]:
+# In[ ]:
 
 
 
@@ -167,7 +180,7 @@ test.head()
 
 # # Model Evaluation
 
-# In[19]:
+# In[ ]:
 
 
 actual = test.actual.values.tolist()
@@ -176,7 +189,7 @@ pop_predictions = test.pop_predictions.values.tolist()
 random_predictions = test.random_predictions.values.tolist()
 
 
-# In[20]:
+# In[ ]:
 
 
 pop_mark = []
@@ -185,7 +198,7 @@ for K in np.arange(1, 11):
 pop_mark
 
 
-# In[21]:
+# In[ ]:
 
 
 random_mark = []
@@ -194,7 +207,7 @@ for K in np.arange(1, 11):
 random_mark
 
 
-# In[22]:
+# In[ ]:
 
 
 cf_mark = []
@@ -203,20 +216,20 @@ for K in np.arange(1, 11):
 cf_mark
 
 
-# In[23]:
+# In[ ]:
 
 
 test.head()
 
 
-# In[24]:
+# In[ ]:
 
 
 print("MSE: ", mse(preds.actual, preds.cf_predictions))
 print("RMSE: ", rmse(preds.actual, preds.cf_predictions))
 
 
-# In[25]:
+# In[ ]:
 
 
 mark_scores = [random_mark, pop_mark, cf_mark]
@@ -229,15 +242,49 @@ mark_plot(mark_scores, model_names=names, k_range=index)
 
 # # Saving predictions & model
 
-# In[26]:
+# In[ ]:
 
 
-dumping_path = join(_HERE, '..', '..', 'artifacts', 'k-nn.dump')
+dumping_path = join(_HERE, '..', '..', 'artifacts', 'k-nn.pkl')
 dump(dumping_path, algo=algo, verbose=1)
 
+
+# # Inference stage
+
+# In[ ]:
+
+
+recommend(['Iron Man', 'Fast and Furious'], 10)
+
+
+# # Transform notebook to Python script
 
 # In[ ]:
 
 
 get_ipython().system('jupyter nbconvert --to script k_nn.ipynb')
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+collab_model(algo, ['Iron Man (1951)', 'Toy Story (1995)'], 3)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
