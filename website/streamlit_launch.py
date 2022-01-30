@@ -1,5 +1,11 @@
+from os.path import split, join
+from sys import path
+
+path.insert(0, join(split(__file__)[0], '..'))
+
 # Streamlit dependencies
 import streamlit as st
+
 
 st.set_page_config(
     page_title="ENSIAS",
